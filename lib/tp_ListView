@@ -1,0 +1,238 @@
+// main.dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const App());
+}
+
+class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Navigation Demo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: true,
+      ),
+      routes: {
+        '/': (context) => const HomePage(),
+        '/list': (context) => const JoursListPage(),
+        '/langages': (context) => const LangagesPage(),
+      },
+      initialRoute: '/',
+    );
+  }
+}
+
+class Jour {
+  final String intitule;
+  final String description;
+
+  Jour(this.intitule, this.description);
+}
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Navigation Demo'),
+        backgroundColor: Colors.blue,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/list');
+              },
+              child: const Text('liste jours'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/langages');
+              },
+              child: const Text('langages de programmation'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class JoursListPage extends StatelessWidget {
+  const JoursListPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final jours = [
+      Jour("Lundi", "Début de semaine, planification des tâches"),
+      Jour("Mardi", "Réunions d'équipe et validation des projets"),
+      Jour("Mercredi", "Avancement des projets et révision à mi-semaine"),
+      Jour("Jeudi", "Finalisation des tâches principales"),
+      Jour("Vendredi", "Bilan de la semaine et préparation de la suivante"),
+      Jour("Samedi", "Temps libre et loisirs"),
+      Jour("Dimanche", "Repos et préparation de la semaine à venir"),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Les jours de la semaine'),
+        backgroundColor: Colors.orange,
+      ),
+      body: ListView.separated(
+        itemCount: jours.length,
+        separatorBuilder: (context, index) => const Divider(
+          color: Colors.orange,
+          height: 1,
+        ),
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(
+              jours[index].intitule,
+              style: const TextStyle(fontSize: 20),
+            ),
+            leading: CircleAvatar(
+              backgroundColor: Colors.orange,
+              child: Text(
+                jours[index].intitule[0],
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailJourPage(jour: jours[index]),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+class DetailJourPage extends StatelessWidget {
+  final Jour jour;
+
+  const DetailJourPage({Key? key, required this.jour}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Detail: ${jour.intitule}'),
+        backgroundColor: Colors.orange,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.orange,
+                child: Text(
+                  jour.intitule[0],
+                  style: const TextStyle(
+                    fontSize: 40,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Text(
+              jour.intitule,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 15),
+            const Text(
+              'Description:',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              jour.description,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LangagesPage extends StatelessWidget {
+  const LangagesPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final langages = ["JAVA", "KOTLIN", "DART", "SWIFT", "PYTHON", "JAVASCRIPT"];
+    final colors = [
+      Colors.amber[600],
+      Colors.amber[500],
+      Colors.amber[400],
+      Colors.amber[300],
+      Colors.amber[200],
+      Colors.amber[100],
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Langages de programmation'),
+        backgroundColor: Colors.amber,
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(8),
+        itemCount: langages.length,
+        itemBuilder: (context, index) {
+          return Container(
+            height: 80,
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            color: colors[index],
+            child: Center(
+              child: Text(
+                langages[index],
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigation avec remplacement (efface l'historique)
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        },
+        child: const Icon(Icons.home),
+        tooltip: 'Retour direct à l\'accueil',
+      ),
+    );
+  }
+}
